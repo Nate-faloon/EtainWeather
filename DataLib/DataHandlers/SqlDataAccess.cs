@@ -43,7 +43,5 @@ namespace DataLib
                 return cnn.Query<T>(sql, data).Count();
             }
         }
-
-       
     }
 }

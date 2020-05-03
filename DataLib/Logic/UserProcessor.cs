@@ -27,7 +27,7 @@ namespace DataLib
             string sql = @"INSERT INTO dbo.Users (FirstName, LastName, EmailAddress, Password, Salt) 
                             VALUES (@FirstName, @LastName, @EmailAddress, @Password, @Salt)";
 
-            return SqlDataAccess.SaveData(sql, data);
+            return SqlDataAccess.SaveData(sql, data); //insert new user
         }
 
         public string LoadSalt(string LoEmailAddress) //this will gather the salt from the DB for a matching email address
@@ -46,14 +46,27 @@ namespace DataLib
             UserSignInModel data = new UserSignInModel
             { //map our data model and frontend model together
                 EmailAddress = LoEmailAddress,
-                Password = _cryptoHandler.EncryptWithSalt(LoPassword, salt)
+                Password = _cryptoHandler.EncryptWithSalt(LoPassword, salt) //uses the salt pulled from the DB to check against original hash
             };
 
-            // @ symbol allows multiple lines and then to insert properties 
             string sql = @"SELECT EmailAddress from dbo.Users WHERE
                             EmailAddress=@EmailAddress AND Password=@Password";
 
             return SqlDataAccess.CheckUser(sql, data);
+        }
+
+        public int CheckExists(string LoEmailAddress) //checks if a user account already exists
+        {
+            UserSignInModel data = new UserSignInModel
+            { //map our params and data model together
+                EmailAddress = LoEmailAddress
+            };
+
+            // @ symbol allows multiple lines and then to insert properties 
+            string sql = @"SELECT EmailAddress from dbo.Users WHERE
+                            EmailAddress=@EmailAddress";
+
+            return SqlDataAccess.CheckUser(sql, data); //used for checking if user already exists
         }
     }
 }

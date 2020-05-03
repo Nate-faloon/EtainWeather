@@ -18,17 +18,18 @@ namespace DataLib.Logic
         {
             ApiHandler.InitializeApi(); //initialise our http handler
 
-            List<WeatherDataModel> weatherMain = new List<WeatherDataModel>();
+            List<WeatherDataModel> weatherMain = new List<WeatherDataModel>(); //make a list of type model to store the first result from each api call
 
 
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++) // 0-6 gets todays weather plus 5 days
             {
+                //adding 'i' days to make the call dynamic
                 string url = $" {ApiHandler.ApiClient.BaseAddress + DateWeather.Date.AddDays(i).ToString("yyyy/MM/dd") }/"; //this will be appended to our base url to get the weather for selected date
 
-                using (HttpResponseMessage response = await ApiHandler.ApiClient.GetAsync(url))
+                using (HttpResponseMessage response = await ApiHandler.ApiClient.GetAsync(url)) //using statement handles the releasing of variables before next loop
                 {
-                    if (response.IsSuccessStatusCode)
+                    if (response.IsSuccessStatusCode) //if page gives back status 200 (all ok) 
                     {
                         // we have succesful call here
                         List<WeatherDataModel> weather = await response.Content.ReadAsAsync<List<WeatherDataModel>>();
@@ -41,7 +42,7 @@ namespace DataLib.Logic
             }
 
 
-            return weatherMain;
+            return weatherMain; //return our main list back to the home controller
             
 
         }

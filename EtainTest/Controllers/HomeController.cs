@@ -18,107 +18,171 @@ namespace EtainTest.Controllers
         private readonly WeatherProcessor _WeatherProcessor = new WeatherProcessor();
         private readonly UserProcessor _UserProcessor = new UserProcessor();
 
+
         public async Task<ActionResult> Index()
         {
-            String isAuth = HttpContext.Session["_Auth"].ToString();
-            if (isAuth == "True") //change to true when done testing
+            try
             {
-                var WeatherReturned = await _WeatherProcessor.LoadWeather(DateTime.Now); //make a call to the API with data
-
-                List<WeatherModel> weather = new List<WeatherModel>(); //new blank list based on WeatherModel
-
-                foreach (var row in WeatherReturned) //for each day of weather returned
+                String isAuth = HttpContext.Session["_Auth"].ToString();
+                if (isAuth == "True") //change to true when done testing
                 {
-                    weather.Add(new WeatherModel // make a new instance of model for each row
-                    {
-                        Weather_State_Name = row.Weather_State_Name, //map our two models together
-                        WeatherImage = $"https://www.metaweather.com/static/img/weather/png/{row.Weather_State_Abbr}.png", //pass in the weather abbreviaton to get a direct link to the image
-                        Applicable_Date = row.Applicable_Date, 
-                        LastSyncTime = _WeatherProcessor.LastSync.ToString() //grab our last sync time from the processor                         
-                    });
-                }
+                    var WeatherReturned = await _WeatherProcessor.LoadWeather(DateTime.Now); //make a call to the API with data
 
-                return View(weather); //return the view with our datamodel passed in
-            }
-            else
+                    List<WeatherModel> weather = new List<WeatherModel>(); //new blank list based on WeatherModel
+
+                    foreach (var row in WeatherReturned) //for each day of weather returned
+                    {
+                        weather.Add(new WeatherModel // make a new instance of model for each row
+                        {
+                            Weather_State_Name = row.Weather_State_Name, //map our two models together
+                            WeatherImage = $"https://www.metaweather.com/static/img/weather/png/{row.Weather_State_Abbr}.png", //pass in the weather abbreviaton to get a direct link to the image
+                            Applicable_Date = row.Applicable_Date, 
+                            LastSyncTime = _WeatherProcessor.LastSync.ToString() //grab our last sync time from the processor                         
+                        });
+                    }
+
+                    return View(weather); //return the view with our datamodel passed in
+                }
+                else
+                {
+                    return RedirectToAction("SignIn");
+                }
+                }
+            catch (Exception) 
             {
+                //blanket catch all that should pass a user to an error page instead of an /Application failure
                 return RedirectToAction("SignIn");
             }
-            
         }
 
         public ActionResult SignIn() //return a sign in page when user isnt posting
         {
-            ViewBag.Message = "Sign In Page";
+            try
+            {
+                ViewBag.Message = "Sign In Page";
 
-            return View();
+                return View();
+            }
+            catch (Exception)
+            {
+                //blanket catch all that should pass a user to an error page instead of an /Application failure
+                return RedirectToAction("SignIn");
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken] //Validate our anti forgery token here
         public ActionResult SignIn(SigninModel model)
         {
-            //HttpContext.Session.Add("_Auth","False");
-            String isAuth = HttpContext.Session["_Auth"].ToString(); //grab our loggedin session variable
-
-            if (ModelState.IsValid) // double check our data is valid, incase the client javascript is bypassed
+            try
             {
-                string salt = _UserProcessor.LoadSalt(model.EmailAddress); //grab the salt tied to this email from the DB
+                //HttpContext.Session.Add("_Auth","False");
+                String isAuth = HttpContext.Session["_Auth"].ToString(); //grab our loggedin session variable
 
-                if (salt.Length < 1)
+                if (ModelState.IsValid) // double check our data is valid, incase the client javascript is bypassed
                 {
-                    return View(); //No salt stored for this email, no point in continuing
+                    string salt = _UserProcessor.LoadSalt(model.EmailAddress); //grab the salt tied to this email from the DB
+
+                    if (salt.Length < 1)
+                    {
+                        return View(); //No salt stored for this email, no point in continuing
+                    }
+
+                    //pass email raw password and salt to the user processor for validation, returns 1 for success
+                    int returned = _UserProcessor.CheckCredentials(model.EmailAddress, model.Password, salt);
+
+                    if (returned == 1)
+                    {
+                        HttpContext.Session["_Auth"] = "True"; //login successfull
+                        //redirect back to sign in page once user authenticated
+                        return RedirectToAction("Index");
+                    }
                 }
 
-                //pass email raw password and salt to the user processor for validation, returns 1 for success
-                int returned = _UserProcessor.CheckCredentials(model.EmailAddress,model.Password, salt);
-
-                if (returned == 1)
-                {
-                    HttpContext.Session["_Auth"] = "True"; //login successfull
-                    //redirect back to sign in page once user authenticated
-                    return RedirectToAction("Index");
-                }
+                HttpContext.Session["_Auth"] = "False"; //login failed
+                return View(); //else return back to normal page
             }
-
-            HttpContext.Session["_Auth"] = "False"; //login failed
-            return View(); //else return back to normal page
+            catch (Exception)
+            {
+                //blanket catch all that should pass a user to an error page instead of an /Application failure
+                return RedirectToAction("SignIn");
+            }
         }
 
 
         public ActionResult SignUp() //return a sign up page when user isnt posting
         {
-            ViewBag.Message = "User Sign Up Page";
+            try
+            {
+                ViewBag.Message = "User Sign Up Page";
 
-            return View();
+                return View();
+            }
+            catch (Exception)
+            {
+                //blanket catch all that should pass a user to an error page instead of an /Application failure
+                return RedirectToAction("SignIn");
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken] //Validate our anti forgery token here
         public ActionResult SignUp(UserModel model)
         {
-            if (ModelState.IsValid) // double check our data is valid, incase the client javascript is bypassed
+            try
             {
-                _UserProcessor.CreateUser(model.FirstName, 
-                    model.LastName, 
-                    model.EmailAddress, 
-                    model.Password);
+                if (ModelState.IsValid) // double check our data is valid, incase the client javascript is bypassed
+                {
+                    if (_UserProcessor.CheckExists(model.EmailAddress) == 1)
+                    {
+                        //email already exists, throw user back to sign up page
+                        ModelState.AddModelError("", "This Email Address already exists");
+                        return View(model); //pass the user back with everything but their password
+                    }
+                    else
+                    {
+                        //email doesnt exist yet, go ahead and insert
+                        _UserProcessor.CreateUser(model.FirstName,
+                           model.LastName,
+                           model.EmailAddress,
+                           model.Password);
 
-                //redirect back to sign in page once user is created
-                return RedirectToAction("Index");
+                        //redirect back to sign in page once user is created
+                        return RedirectToAction("Index");
+                    }
+                }
+
+                return View(model); //pass the user back with everything but their password
             }
-
-            return View(); //else return back to resubmit page
+            catch (Exception)
+            {
+                //blanket catch all that should pass a user to an error page instead of an /Application failure
+                return RedirectToAction("SignIn");
+            }
         }
 
         public ActionResult SignOut() //handle user trying to sign out
         {
-            ViewBag.Message = "User Signed Out";
+            try
+            {
+                ViewBag.Message = "User Signed Out";
 
-            HttpContext.Session["_Auth"] = "False"; //end session authentication
-            //HttpContext.Session.Remove("_Auth"); //kill session variable
+                HttpContext.Session["_Auth"] = "False"; //end session authentication
+                                                       
+                return RedirectToAction("SignIn"); //redirect to sign in
+            }
+            catch (Exception)
+            {
+                //blanket catch all that should pass a user to an error page instead of an /Application failure
+                return RedirectToAction("SignIn");
+            }
+        }
 
-            return RedirectToAction("SignIn"); //redirect to sign in
+        public ActionResult Error() //return error page 
+        {
+            ViewBag.Message = "Error Page";
+
+            return View();
         }
     }
 }
