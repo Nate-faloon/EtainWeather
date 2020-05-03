@@ -1,0 +1,197 @@
+﻿@model IEnumerable<EtainTest.Models.WeatherModel>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+@using (Html.BeginForm())
+{
+    <link href="~/loader.css" rel="stylesheet" type="text/css" />
+
+    <script>
+
+        var spinnerVisible = false; //function to handle the spinner appearing when reloading the page.
+        function showProgress() { //smaller spinner for mobile resolutions
+            if (!spinnerVisible) {
+                $("div#spinner").fadeIn("fast");
+                spinnerVisible = true;
+                window.location.reload(); //performs a reload of the page
+            }
+        };
+        function showProgressDesktop() { //larger spinner without the pulldown functionality for desktop
+            if (!spinnerVisible) {
+                $("div#spinnerDesktop").fadeIn("fast");
+                spinnerVisible = true;
+                window.location.reload(); //performs a reload of the page
+            }
+        };
+
+
+        ////////////////////////////////////////////////////////////////////////////
+        //page pull to refresh detection
+        var pStart = { x: 0, y: 0 };
+        var pStop = { x: 0, y: 0 };
+
+        function swipeStart(e) {
+            if (typeof e['targetTouches'] !== "undefined") {
+                var touch = e.targetTouches[0];
+
+                pStart.x = touch.screenX;
+                pStart.y = touch.screenY;
+            } else {
+                pStart.x = e.screenX;
+                pStart.y = e.screenY;
+            }
+        }
+
+        function swipeEnd(e) {
+            if (typeof e['changedTouches'] !== "undefined") {
+                var touch = e.changedTouches[0];
+                pStop.x = touch.screenX;
+                pStop.y = touch.screenY;
+            } else {
+                pStop.x = e.screenX;
+                pStop.y = e.screenY;
+            }
+
+            swipeCheck();
+        }
+
+        function swipeCheck() {
+            var changeY = pStart.y - pStop.y;
+            var changeX = pStart.x - pStop.x;
+            if (isPullDown(changeY, changeX)) { //this is where refresh is called
+                showProgress();                
+            }
+        }
+
+        function isPullDown(dY, dX) {
+            // methods of checking slope, length, direction of line created by swipe action
+            return dY < 0 && (
+                (Math.abs(dX) <= 100 && Math.abs(dY) >= 300)
+                || (Math.abs(dX) / Math.abs(dY) <= 0.3 && dY >= 60)
+            );
+        }
+        //page pull to refresh detection
+        ////////////////////////////////////////////////////////////////////////////
+        
+
+        document.addEventListener('touchstart', function (e) { swipeStart(e); }, false);
+        document.addEventListener('touchend', function (e) { swipeEnd(e); }, false);
+    </script>
+
+    
+    <div id="spinner"> @* show loading gif when refreshing via swipe and refresh button *@
+        <img src="http://www.kraniumwebdesign.com/images/loader.gif?a=1" style="width:100%;height:100%;border-radius:1em 1em 1em 1em;" />
+    </div>
+    <div id="spinnerDesktop"> @* show loading gif when refreshing via swipe and refresh button *@
+        <img src="http://www.kraniumwebdesign.com/images/loader.gif?a=1" style="width:100%;height:100%;border-radius:1em 1em 1em 1em;" />
+    </div>
+    
+
+    <div id="content">
+        <div class="form-horizontal hidden-lg hidden-md">
+            @* FOR MOBILE*@
+
+            <h4 style="text-align:center;">Last Sync Time: @(Model.ToList()[0].LastSyncTime)</h4>
+            <p style="text-align:center;">Swipe to Refresh</p>
+
+            @foreach (var item in Model)
+            {
+                <div id="main" class="row" style="padding:20px;text-align:center;">
+
+                    <div id="Date" style="font-weight:700;">
+                        @if (item.Applicable_Date.AsDateTime() == DateTime.Now.Date)
+                        {
+                            <h2>Today</h2>
+                        }
+                        else
+                        {
+                            <h2>@Html.DisplayFor(modelItem => item.Applicable_Date.AsDateTime().DayOfWeek) </h2> <br />
+                        }
+                    </div>
+
+                    <div id="Image">
+                        <img src="@Html.DisplayFor(modelItem => item.WeatherImage)" style="height:95px;width:95px;" /> <br />
+                    </div>
+
+                    <div id="WeatherForecast" style="padding-top:10px;font-weight:600;">
+                        <h4>@Html.DisplayFor(modelItem => item.Weather_State_Name)</h4>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="form-horizontal hidden-sm hidden-md hidden-xs">
+            @* FOR DESKTOP*@
+            <div id="main" class="row" style="padding:20px;text-align:center;">
+
+                <div class="row">
+                    <h2 style="text-align:center;">Last Sync Time: @(Model.ToList()[0].LastSyncTime)</h2>
+                    <button type="button" onclick="showProgressDesktop();" class="btn btn-secondary btn-lg">Refresh Weather</button>
+                </div>
+
+                @foreach (var item in Model)
+                {
+
+                    <div class="col-lg-4" style="padding:40px;">
+                        <div id="Date" class="" style="font-weight:700;">
+                            @if (item.Applicable_Date.AsDateTime() == DateTime.Now.Date)
+                            {
+                                <h2>Today</h2>
+                            }
+                            else
+                            {
+                                <h2>@Html.DisplayFor(modelItem => item.Applicable_Date.AsDateTime().DayOfWeek) </h2>
+                            }
+                        </div>
+
+                        <div id="Image">
+                            <img src="@Html.DisplayFor(modelItem => item.WeatherImage)" style="height:80px;width:80px;" />
+                        </div>
+
+                        <div id="WeatherForecast" style="padding-top:10px;font-weight:600;">
+                            <h4>@Html.DisplayFor(modelItem => item.Weather_State_Name)</h4>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="form-horizontal hidden-sm hidden-lg hidden-xs">
+            @* FOR TABLETS*@
+
+            <div id="main" class="row" style="padding:20px;text-align:center;">
+
+                <h2 style="text-align:center;">Last Sync Time: @(Model.ToList()[0].LastSyncTime)</h2>
+                <p style="text-align:center;">Swipe to Refresh</p>
+
+                @foreach (var item in Model)
+                {
+
+                    <div class="col-sm-6" style="padding:40px;">
+                        <div id="Date" class="" style="font-weight:700;">
+                            @if (item.Applicable_Date.AsDateTime() == DateTime.Now.Date)
+                            {
+                                <h2>Today</h2>
+                            }
+                            else
+                            {
+                                <h2>@Html.DisplayFor(modelItem => item.Applicable_Date.AsDateTime().DayOfWeek) </h2>
+                            }
+                        </div>
+
+                        <div id="Image">
+                            <img src="@Html.DisplayFor(modelItem => item.WeatherImage)" style="height:80px;width:80px;" />
+                        </div>
+
+                        <div id="WeatherForecast" style="padding-top:10px;font-weight:600;">
+                            <h4>@Html.DisplayFor(modelItem => item.Weather_State_Name)</h4>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+}

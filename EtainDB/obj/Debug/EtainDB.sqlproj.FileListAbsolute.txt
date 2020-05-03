@@ -1,0 +1,9 @@
+C:\Users\natha\OneDrive\Desktop\EtainDB\bin\Debug\EtainDB.dacpac
+C:\Users\natha\OneDrive\Desktop\EtainDB\bin\Debug\EtainDB.dll
+C:\Users\natha\OneDrive\Desktop\EtainDB\bin\Debug\EtainDB.pdb
+C:\Users\natha\OneDrive\Desktop\EtainDB\obj\Debug\Model.xml
+C:\Users\natha\OneDrive\Desktop\EtainDB\obj\Debug\refactor.xml
+C:\Users\natha\OneDrive\Desktop\EtainDB\obj\Debug\postdeploy.sql
+C:\Users\natha\OneDrive\Desktop\EtainDB\obj\Debug\predeploy.sql
+C:\Users\natha\OneDrive\Desktop\EtainDB\obj\Debug\EtainDB.dll
+C:\Users\natha\OneDrive\Desktop\EtainDB\obj\Debug\EtainDB.pdb
