@@ -30,3 +30,19 @@ C:\Users\natha\OneDrive\Documents\GitHub\EtainWeather\DataLib\obj\Debug\DataLib.
 C:\Users\natha\OneDrive\Documents\GitHub\EtainWeather\DataLib\obj\Debug\DataLib.csproj.CopyComplete
 C:\Users\natha\OneDrive\Documents\GitHub\EtainWeather\DataLib\obj\Debug\DataLib.dll
 C:\Users\natha\OneDrive\Documents\GitHub\EtainWeather\DataLib\obj\Debug\DataLib.pdb
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\bin\Debug\DataLib.dll
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\bin\Debug\DataLib.pdb
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\bin\Debug\Dapper.dll
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\bin\Debug\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\bin\Debug\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\bin\Debug\System.Net.Http.Extensions.dll
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\bin\Debug\System.Net.Http.Formatting.dll
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\bin\Debug\System.Net.Http.Primitives.dll
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\bin\Debug\Newtonsoft.Json.dll
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\bin\Debug\Dapper.xml
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\bin\Debug\Microsoft.AspNetCore.Cryptography.Internal.xml
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\bin\Debug\Microsoft.AspNetCore.Cryptography.KeyDerivation.xml
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\obj\Debug\DataLib.csprojAssemblyReference.cache
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\obj\Debug\DataLib.csproj.CopyComplete
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\obj\Debug\DataLib.dll
+C:\Users\natha\Downloads\EtainWeather-master (1)\EtainWeather-master\DataLib\obj\Debug\DataLib.pdb

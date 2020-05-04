@@ -51,7 +51,7 @@ namespace EtainTest.Controllers
             catch (Exception) 
             {
                 //blanket catch all that should pass a user to an error page instead of an /Application failure
-                return RedirectToAction("SignIn");
+                return RedirectToAction("Error");
             }
         }
 
@@ -66,7 +66,7 @@ namespace EtainTest.Controllers
             catch (Exception)
             {
                 //blanket catch all that should pass a user to an error page instead of an /Application failure
-                return RedirectToAction("SignIn");
+                return RedirectToAction("Error");
             }
         }
 
@@ -85,7 +85,8 @@ namespace EtainTest.Controllers
 
                     if (salt.Length < 1)
                     {
-                        return View(); //No salt stored for this email, no point in continuing
+                        ModelState.AddModelError("", "Email Address or Password incorrect");
+                        return View(model); //No salt stored for this email, no point in continuing
                     }
 
                     //pass email raw password and salt to the user processor for validation, returns 1 for success
@@ -99,13 +100,14 @@ namespace EtainTest.Controllers
                     }
                 }
 
+                ModelState.AddModelError("", "Email Address or Password incorrect");
                 HttpContext.Session["_Auth"] = "False"; //login failed
-                return View(); //else return back to normal page
+                return View(model); //else return back to normal page
             }
             catch (Exception)
             {
                 //blanket catch all that should pass a user to an error page instead of an /Application failure
-                return RedirectToAction("SignIn");
+                return RedirectToAction("Error");
             }
         }
 
@@ -121,7 +123,7 @@ namespace EtainTest.Controllers
             catch (Exception)
             {
                 //blanket catch all that should pass a user to an error page instead of an /Application failure
-                return RedirectToAction("SignIn");
+                return RedirectToAction("Error");
             }
         }
 
@@ -157,7 +159,7 @@ namespace EtainTest.Controllers
             catch (Exception)
             {
                 //blanket catch all that should pass a user to an error page instead of an /Application failure
-                return RedirectToAction("SignIn");
+                return RedirectToAction("Error");
             }
         }
 
@@ -174,7 +176,7 @@ namespace EtainTest.Controllers
             catch (Exception)
             {
                 //blanket catch all that should pass a user to an error page instead of an /Application failure
-                return RedirectToAction("SignIn");
+                return RedirectToAction("Error");
             }
         }
 

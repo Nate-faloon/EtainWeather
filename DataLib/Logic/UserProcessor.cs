@@ -39,7 +39,15 @@ namespace DataLib
 
             string sql = "select Salt from dbo.Users where EmailAddress = @emailAddress";
             var salt = SqlDataAccess.LoadSalt(sql, data);
-            return salt[0].salt.ToString(); 
+            if (salt.Count > 0)
+            {
+                return salt[0].salt.ToString();
+            }
+            else
+            {
+                return ""; //no salt found for email 
+            }
+            
         }
         public int CheckCredentials(string LoEmailAddress, string LoPassword, string salt) //uses the salt from "LoadSalt" to compare the two complete hashes
         {
